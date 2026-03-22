@@ -718,38 +718,592 @@
             margin: 0 2px;
         }
 
-        /* RESPONSIVE */
+        /* MOBILE NAVIGATION BUTTONS */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .mobile-nav-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(2, 132, 199, 0.9);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mobile-nav-btn:active {
+            transform: scale(0.95);
+            background: rgba(2, 132, 199, 1);
+        }
+
+        .mobile-nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* RESPONSIVE - LARGE TABLETS & SMALL LAPTOPS */
+        @media (max-width: 1280px) {
+            .slide-container {
+                width: min(1100px, 94vw);
+                padding: 50px;
+            }
+            
+            .two-column {
+                gap: 40px;
+            }
+            
+            .tiled-content {
+                gap: 20px;
+            }
+            
+            .tile {
+                padding: 25px;
+            }
+        }
+
+        /* RESPONSIVE - TABLETS */
         @media (max-width: 1024px) {
             .slide-container {
-                padding: 40px;
+                width: 96vw;
+                height: 90vh;
+                padding: 35px;
+                border-radius: 12px;
+            }
+            
+            .slide-container .slide-title {
+                margin-bottom: 25px;
+                font-size: clamp(24px, 4vw, 32px);
             }
             
             .two-column {
                 grid-template-columns: 1fr;
-                gap: 30px;
+                gap: 25px;
+            }
+            
+            .two-column.tiled > div {
+                padding: 25px;
             }
             
             .tiled-content {
                 flex-direction: column;
+                gap: 15px;
+            }
+            
+            .tile {
+                padding: 20px;
+            }
+            
+            .tile .icon {
+                font-size: 32px;
+                margin-bottom: 15px;
             }
             
             .image-wrapper {
-                height: 250px;
+                height: 220px;
             }
             
-            .nav-arrow { display: none; }
+            .image-tile .image-wrapper {
+                height: 160px;
+                margin-bottom: 12px;
+            }
+            
+            .nav-arrow {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .nav-arrow.prev { left: 10px; }
+            .nav-arrow.next { right: 10px; }
             
             .keyboard-hint { display: none; }
+            
+            .slide-nav {
+                bottom: 20px;
+                gap: 8px;
+            }
+            
+            .slide-nav .dot {
+                width: 10px;
+                height: 10px;
+            }
+            
+            .slide-counter {
+                bottom: 20px;
+                right: 20px;
+                font-size: 12px;
+            }
+            
+            .styled-bullet-layout .bullet-list li {
+                padding: 15px 15px 15px 50px;
+                margin-bottom: 12px;
+            }
+            
+            .styled-bullet-layout .bullet-list li i {
+                font-size: 20px;
+                left: 15px;
+                top: 18px;
+            }
+            
+            .full-bg-image .content-overlay {
+                padding: 35px;
+                max-width: 90%;
+            }
         }
 
+        /* RESPONSIVE - TABLETS PORTRAIT & LARGE PHONES */
         @media (max-width: 768px) {
+            .mobile-nav {
+                display: flex;
+            }
+            .slide-container {
+                width: 98vw;
+                height: 92vh;
+                padding: 25px;
+                border-radius: 10px;
+            }
+            
+            .slide-container .slide-title {
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            
             .slide-container.bleed-image-layout {
                 grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
             }
             
             .slide-container.bleed-image-layout > .image-container {
-                height: 200px;
+                height: 180px;
                 order: -1;
+            }
+            
+            .slide-container.bleed-image-layout > .content-container {
+                padding: 25px;
+            }
+            
+            .two-column.tiled {
+                gap: 15px;
+            }
+            
+            .two-column.tiled > div {
+                padding: 20px;
+            }
+            
+            .image-wrapper {
+                height: 180px;
+            }
+            
+            .nav-arrow {
+                display: none;
+            }
+            
+            .content-area {
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .standard-list li {
+                margin-bottom: 12px;
+                padding-left: 20px;
+            }
+            
+            .standard-list li::before {
+                font-size: 20px;
+            }
+            
+            .qa-layout h2 {
+                font-size: clamp(32px, 8vw, 50px);
+            }
+            
+            .qa-layout .contact-info {
+                margin-top: 25px;
+            }
+            
+            .full-bg-image .content-overlay {
+                padding: 25px;
+                margin: 15px;
+            }
+            
+            .bleed-text-side p {
+                margin-bottom: 12px;
+            }
+        }
+
+        /* RESPONSIVE - PHONES */
+        @media (max-width: 576px) {
+            .presentation-wrapper {
+                padding: 0;
+            }
+            
+            .slide-container {
+                width: 100vw;
+                height: 100vh;
+                padding: 20px;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            
+            .slide-container .slide-title {
+                font-size: clamp(20px, 5vw, 26px);
+                margin-bottom: 15px;
+            }
+            
+            .slide-container h1 {
+                font-size: clamp(24px, 6vw, 32px);
+            }
+            
+            .slide-container h3 {
+                font-size: clamp(16px, 4vw, 20px);
+                margin-bottom: 10px;
+            }
+            
+            .slide-container p,
+            .slide-container li {
+                font-size: clamp(13px, 3.5vw, 15px);
+                line-height: 1.5;
+                margin-bottom: 10px;
+            }
+            
+            .slide-container .subtitle {
+                font-size: clamp(14px, 4vw, 18px);
+            }
+            
+            .slide-container.bleed-image-layout > .image-container {
+                height: 150px;
+            }
+            
+            .slide-container.bleed-image-layout > .content-container {
+                padding: 20px;
+            }
+            
+            .two-column {
+                gap: 15px;
+            }
+            
+            .two-column.tiled > div {
+                padding: 15px;
+            }
+            
+            .tiled-content {
+                gap: 12px;
+            }
+            
+            .tile {
+                padding: 15px;
+            }
+            
+            .tile .icon {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+            
+            .tile h3 {
+                font-size: 16px;
+            }
+            
+            .tile p {
+                font-size: 13px;
+            }
+            
+            .image-wrapper {
+                height: 140px;
+            }
+            
+            .image-tile .image-wrapper {
+                height: 120px;
+                margin-bottom: 8px;
+            }
+            
+            .image-tile p {
+                font-size: 13px;
+            }
+            
+            .styled-bullet-layout .bullet-list li {
+                padding: 12px 12px 12px 45px;
+                margin-bottom: 10px;
+            }
+            
+            .styled-bullet-layout .bullet-list li i {
+                font-size: 18px;
+                left: 12px;
+                top: 14px;
+            }
+            
+            .styled-bullet-layout li strong {
+                font-size: clamp(14px, 3.5vw, 16px);
+                margin-bottom: 3px;
+            }
+            
+            .slide-nav {
+                bottom: 15px;
+                gap: 6px;
+            }
+            
+            .slide-nav .dot {
+                width: 8px;
+                height: 8px;
+            }
+            
+            .slide-counter {
+                bottom: 15px;
+                right: 15px;
+                font-size: 11px;
+            }
+            
+            .progress-bar {
+                height: 3px;
+            }
+            
+            .full-bg-image .content-overlay {
+                padding: 20px;
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            .full-bg-image .content-overlay h2 {
+                font-size: clamp(24px, 6vw, 32px) !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .full-bg-image .content-overlay p {
+                font-size: clamp(13px, 3.5vw, 16px) !important;
+            }
+            
+            .qa-layout h2 {
+                font-size: clamp(28px, 7vw, 40px);
+            }
+            
+            .qa-layout p {
+                font-size: clamp(14px, 4vw, 18px);
+            }
+            
+            .standard-list li {
+                margin-bottom: 10px;
+                padding-left: 18px;
+            }
+            
+            .standard-list li strong {
+                font-size: 14px;
+            }
+            
+            .bleed-alert h3 {
+                font-size: clamp(12px, 3vw, 14px) !important;
+            }
+            
+            .bleed-alert h1 {
+                font-size: clamp(20px, 5vw, 28px) !important;
+                margin-bottom: 15px !important;
+            }
+        }
+
+        /* RESPONSIVE - VERY SMALL PHONES */
+        @media (max-width: 375px) {
+            .slide-container {
+                padding: 15px;
+            }
+            
+            .slide-container .slide-title {
+                font-size: 18px;
+            }
+            
+            .slide-container h1 {
+                font-size: 22px;
+            }
+            
+            .slide-container p,
+            .slide-container li {
+                font-size: 12px;
+            }
+            
+            .tile {
+                padding: 12px;
+            }
+            
+            .tile .icon {
+                font-size: 24px;
+            }
+            
+            .two-column.tiled > div {
+                padding: 12px;
+            }
+            
+            .styled-bullet-layout .bullet-list li {
+                padding: 10px 10px 10px 38px;
+            }
+            
+            .styled-bullet-layout .bullet-list li i {
+                font-size: 16px;
+                left: 10px;
+                top: 12px;
+            }
+            
+            .slide-container.bleed-image-layout > .image-container {
+                height: 120px;
+            }
+            
+            .slide-container.bleed-image-layout > .content-container {
+                padding: 15px;
+            }
+        }
+
+        /* LANDSCAPE MODE ON PHONES */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .slide-container {
+                padding: 15px 30px;
+                height: 100vh;
+            }
+            
+            .slide-container .slide-title {
+                margin-bottom: 10px;
+                font-size: 20px;
+            }
+            
+            .slide-container h1 {
+                font-size: 24px;
+                margin-bottom: 10px;
+            }
+            
+            .slide-container p,
+            .slide-container li {
+                font-size: 12px;
+                margin-bottom: 6px;
+                line-height: 1.4;
+            }
+            
+            .two-column {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+            
+            .tiled-content {
+                flex-direction: row;
+            }
+            
+            .slide-container.bleed-image-layout {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr;
+            }
+            
+            .slide-container.bleed-image-layout > .image-container {
+                height: 100%;
+                order: 1;
+            }
+            
+            .image-wrapper {
+                height: 120px;
+            }
+            
+            .image-tile .image-wrapper {
+                height: 80px;
+            }
+            
+            .tile {
+                padding: 10px;
+            }
+            
+            .tile .icon {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+            
+            .tile h3 {
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+            
+            .slide-nav {
+                bottom: 10px;
+            }
+            
+            .slide-counter {
+                bottom: 10px;
+                right: 15px;
+            }
+            
+            .styled-bullet-layout .bullet-list li {
+                padding: 8px 8px 8px 35px;
+                margin-bottom: 6px;
+            }
+            
+            .full-bg-image .content-overlay {
+                padding: 15px 25px;
+            }
+        }
+
+        /* HIGH DPI / RETINA DISPLAYS */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .slide-container {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            }
+        }
+
+        /* REDUCED MOTION PREFERENCE */
+        @media (prefers-reduced-motion: reduce) {
+            .slide-container,
+            .slide-container.active .animate-title,
+            .slide-container.active .animate-subtitle,
+            .slide-container.active .animate-content,
+            .slide-container.active .animate-left,
+            .slide-container.active .animate-right,
+            .slide-container.active .animate-scale,
+            .slide-container.active .animate-item-1,
+            .slide-container.active .animate-item-2,
+            .slide-container.active .animate-item-3,
+            .slide-container.active .animate-item-4 {
+                animation: none !important;
+                transition: opacity 0.3s ease !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            
+            .slide-container.active {
+                transform: translate(-50%, -50%) !important;
+            }
+            
+            .bleed-alert h3 i {
+                animation: none !important;
+            }
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            .presentation-wrapper {
+                background: white;
+            }
+            
+            .slide-container {
+                position: relative;
+                page-break-after: always;
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            .nav-arrow,
+            .slide-nav,
+            .slide-counter,
+            .progress-bar,
+            .keyboard-hint {
+                display: none !important;
             }
         }
     </style>
@@ -1021,6 +1575,15 @@
     <div class="keyboard-hint">
         <kbd>←</kbd> <kbd>→</kbd> para navegar
     </div>
+    
+    <div class="mobile-nav" id="mobileNav">
+        <button class="mobile-nav-btn prev" onclick="changeSlide(-1)" aria-label="Anterior">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="mobile-nav-btn next" onclick="changeSlide(1)" aria-label="Siguiente">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </div>
 </div>
 
 <script>
@@ -1033,6 +1596,9 @@
     const slideNav = document.getElementById('slideNav');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    const mobilePrevBtn = mobileNav?.querySelector('.prev');
+    const mobileNextBtn = mobileNav?.querySelector('.next');
 
     // Create navigation dots
     slides.forEach((_, index) => {
@@ -1069,6 +1635,10 @@
         // Update arrow buttons
         prevBtn.disabled = currentSlide === 0;
         nextBtn.disabled = currentSlide === totalSlides - 1;
+        
+        // Update mobile nav buttons
+        if (mobilePrevBtn) mobilePrevBtn.disabled = currentSlide === 0;
+        if (mobileNextBtn) mobileNextBtn.disabled = currentSlide === totalSlides - 1;
     }
 
     function changeSlide(direction) {
