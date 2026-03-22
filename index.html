@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe del Consejo - Urbanización Ciudad Central P.H.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background-color: #0f172a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* PRESENTATION WRAPPER */
+        .presentation-wrapper {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* PROGRESS BAR */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0284c7, #38bdf8);
+            width: 0%;
+            transition: width 0.4s ease;
+            z-index: 1000;
+        }
+
+        /* SLIDE NAVIGATION */
+        .slide-nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .slide-nav .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .slide-nav .dot:hover {
+            background: rgba(255,255,255,0.6);
+            transform: scale(1.2);
+        }
+
+        .slide-nav .dot.active {
+            background: #0284c7;
+            box-shadow: 0 0 10px rgba(2, 132, 199, 0.5);
+            transform: scale(1.2);
+        }
+
+        /* ARROW NAVIGATION */
+        .nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-arrow.prev { left: 30px; }
+        .nav-arrow.next { right: 30px; }
+
+        .nav-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* SLIDE COUNTER */
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+        }
+
+        /* SLIDES CONTAINER */
+        .slides-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* BASE SLIDE */
+        .slide-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            width: min(1280px, 95vw);
+            height: min(720px, 85vh);
+            overflow: hidden;
+            padding: 60px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-container.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .slide-container.prev {
+            transform: translate(-150%, -50%) scale(0.8);
+        }
+
+        .slide-container.next {
+            transform: translate(50%, -50%) scale(0.8);
+        }
+
+        /* Background decorative elements */
+        .slide-container::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(2, 132, 199, 0.05) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .slide-container::after {
+            content: '';
+            position: absolute;
+            bottom: -200px;
+            left: -200px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(15, 23, 42, 0.03) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .slide-container > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Animation classes */
+        .slide-container.active .animate-title {
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+
+        .slide-container.active .animate-subtitle {
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.4s;
+            opacity: 0;
+        }
+
+        .slide-container.active .animate-content {
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.5s;
+            opacity: 0;
+        }
+
+        .slide-container.active .animate-left {
+            animation: fadeInLeft 0.8s ease forwards;
+            animation-delay: 0.4s;
+            opacity: 0;
+        }
+
+        .slide-container.active .animate-right {
+            animation: fadeInRight 0.8s ease forwards;
+            animation-delay: 0.5s;
+            opacity: 0;
+        }
+
+        .slide-container.active .animate-scale {
+            animation: scaleIn 0.8s ease forwards;
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+
+        .slide-container.active .animate-item-1 {
+            animation: slideInFromBottom 0.6s ease forwards;
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+
+        .slide-container.active .animate-item-2 {
+            animation: slideInFromBottom 0.6s ease forwards;
+            animation-delay: 0.45s;
+            opacity: 0;
+        }
+
+        .slide-container.active .animate-item-3 {
+            animation: slideInFromBottom 0.6s ease forwards;
+            animation-delay: 0.6s;
+            opacity: 0;
+        }
+
+        .slide-container.active .animate-item-4 {
+            animation: slideInFromBottom 0.6s ease forwards;
+            animation-delay: 0.75s;
+            opacity: 0;
+        }
+
+        /* TYPOGRAPHY */
+        .slide-container h1,
+        .slide-container h2,
+        .slide-container h3 {
+            color: #0f172a;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+
+        .slide-container p,
+        .slide-container li,
+        .slide-container .subtitle {
+            color: #475569;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .slide-container h1 {
+            font-size: clamp(40px, 5vw, 70px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .slide-container .slide-title {
+            font-size: clamp(28px, 3vw, 40px);
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .slide-container h3 {
+            font-size: clamp(20px, 2vw, 26px);
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #0f172a;
+        }
+
+        .slide-container p,
+        .slide-container li,
+        .slide-container .subtitle {
+            font-size: clamp(14px, 1.5vw, 18px);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .slide-container p:last-child {
+            margin-bottom: 0;
+        }
+
+        .slide-container .subtitle {
+            font-size: clamp(18px, 2vw, 24px);
+            color: #0284c7;
+            font-weight: 500;
+        }
+
+        .accent-color { color: #0284c7; }
+        .alert-color { color: #e11d48; }
+
+        img {
+            background-color: #f1f5f9;
+            color: #64748b;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* LAYOUT COMPONENTS */
+        .content-area {
+            align-items: flex-start;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        .two-column {
+            align-items: flex-start;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .two-column.tiled {
+            align-items: stretch;
+        }
+
+        .two-column.tiled > div {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .two-column.tiled > div:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .image-wrapper {
+            border-radius: 12px;
+            height: 380px;
+            max-width: 100%;
+            overflow: hidden;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .image-wrapper img {
+            height: 100%;
+            max-width: 100%;
+            object-fit: cover;
+            width: 100%;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .image-wrapper:hover img {
+            transform: scale(1.05);
+        }
+
+        .two-column .image-wrapper img {
+            object-fit: cover;
+            background-color: #f8fafc;
+        }
+
+        .tiled-content {
+            align-items: stretch;
+            display: flex;
+            gap: 30px;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .tile {
+            align-items: flex-start;
+            background-color: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 30px;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .tile:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border-color: #0284c7;
+        }
+
+        .tile .icon {
+            color: #0284c7;
+            font-size: 40px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .tile:hover .icon {
+            transform: scale(1.15);
+        }
+
+        .image-tile {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .image-tile .image-wrapper {
+            height: 200px;
+            margin-bottom: 20px;
+        }
+        
+        .image-tile p {
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bullet-list li,
+        .standard-list li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 18px;
+        }
+
+        .standard-list li::before {
+            content: '•';
+            color: #0284c7;
+            font-weight: bold;
+            font-size: 24px;
+            position: absolute;
+            left: 0;
+            top: -4px;
+        }
+
+        .bullet-list li i {
+            color: #0284c7;
+            font-size: 18px;
+            position: absolute;
+            left: 0;
+            top: 4px;
+        }
+
+        .styled-bullet-layout .bullet-list {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .styled-bullet-layout .bullet-list li {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px 20px 20px 60px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .styled-bullet-layout .bullet-list li:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-color: #0284c7;
+        }
+
+        .styled-bullet-layout .bullet-list li i {
+            font-size: 24px;
+            left: 20px;
+            top: 22px;
+            transition: transform 0.3s ease;
+        }
+
+        .styled-bullet-layout .bullet-list li:hover i {
+            transform: scale(1.2);
+        }
+
+        .styled-bullet-layout li strong {
+            color: #0f172a;
+            display: block;
+            font-size: clamp(16px, 1.5vw, 20px);
+            margin-bottom: 5px;
+        }
+
+        /* BLEED IMAGE LAYOUT */
+        .slide-container.bleed-image-layout {
+            align-items: start;
+            display: grid;
+            gap: 0;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            padding: 0;
+            background-color: #ffffff;
+        }
+
+        .slide-container.bleed-image-layout > .content-container {
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .slide-container.bleed-image-layout > .image-container {
+            height: 100%;
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+            background-color: #e2e8f0;
+        }
+
+        .slide-container.bleed-image-layout img.bleed-image-side {
+            display: block;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            width: 100%;
+            transition: transform 0.8s ease;
+        }
+
+        .slide-container.active.bleed-image-layout img.bleed-image-side {
+            animation: scaleIn 1s ease forwards;
+        }
+
+        .bleed-text-side p {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: clamp(14px, 1.5vw, 20px);
+        }
+        
+        .bleed-alert h1, .bleed-alert h3 {
+            color: #e11d48;
+        }
+
+        .bleed-alert h3 i {
+            animation: pulse 2s infinite;
+        }
+        
+        /* FULL BACKGROUND IMAGE LAYOUT */
+        .full-bg-image {
+            background-position: center;
+            background-size: cover;
+            position: relative;
+            background-color: #1e293b;
+        }
+
+        .full-bg-image .content-overlay {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 800px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+
+        /* SECTION TITLE LAYOUT */
+        .section-title-layout {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .section-title-layout h2 {
+            font-size: clamp(40px, 5vw, 60px);
+            margin-bottom: 20px;
+        }
+
+        .section-title-layout hr {
+            background-color: #0284c7;
+            border: none;
+            height: 4px;
+            margin: 30px auto;
+            width: 80px;
+            border-radius: 2px;
+        }
+
+        /* Q&A LAYOUT */
+        .qa-layout {
+            margin: 0 auto;
+            text-align: center;
+            width: 100%;
+        }
+
+        .qa-layout h2 {
+            font-size: clamp(40px, 5vw, 70px);
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        .qa-layout .contact-info {
+            color: #0284c7;
+            font-size: clamp(18px, 2vw, 22px);
+            margin-top: 40px;
+            font-weight: 500;
+        }
+
+        /* KEYBOARD HINT */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            color: rgba(255,255,255,0.4);
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .keyboard-hint kbd {
+            background: rgba(255,255,255,0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .slide-container {
+                padding: 40px;
+            }
+            
+            .two-column {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .tiled-content {
+                flex-direction: column;
+            }
+            
+            .image-wrapper {
+                height: 250px;
+            }
+            
+            .nav-arrow { display: none; }
+            
+            .keyboard-hint { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .slide-container.bleed-image-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .slide-container.bleed-image-layout > .image-container {
+                height: 200px;
+                order: -1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="presentation-wrapper">
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <button class="nav-arrow prev" id="prevBtn" onclick="changeSlide(-1)">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    
+    <button class="nav-arrow next" id="nextBtn" onclick="changeSlide(1)">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <div class="slides-container" id="slidesContainer">
+
+        <!-- Slide 1: Portada -->
+        <div class="slide-container bleed-image-layout active" data-slide="1">
+            <div class="content-container">
+                <div class="bleed-text-side">
+                    <h1 class="animate-title" style="font-size: clamp(35px, 4vw, 50px);">Informe de Gestión 2025-2026</h1>
+                    <p class="subtitle animate-subtitle" style="margin-bottom: 30px; font-size: clamp(18px, 2vw, 22px);">Urbanización Ciudad Central P.H.</p>
+                    <hr class="animate-content" style="background-color: #0284c7; height: 3px; border: none; width: 60px; margin-bottom: 30px;">
+                    <p class="animate-content" style="font-size: clamp(14px, 1.5vw, 18px); color: #64748b;">Presentado por el Consejo de Administración a la Asamblea General de Copropietarios (596 apartamentos).</p>
+                    <p class="animate-content" style="font-size: clamp(14px, 1.5vw, 18px); font-weight: 600; color: #0f172a; margin-top: 20px;">Fecha: 22 de marzo de 2026</p>
+                    <p class="animate-content" style="font-size: clamp(12px, 1.2vw, 15px); color: #94a3b8; margin-top: 5px;">Sector Madera, Bello, Antioquia</p>
+                </div>
+            </div>
+            <div class="image-container animate-right">
+                <img class="bleed-image-side" src="IMG_5765.jpg" alt="Fachada principal de la Urbanización Ciudad Central P.H.">
+            </div>
+        </div>
+
+        <!-- Slide 2: Propósito -->
+        <div class="slide-container" data-slide="2">
+            <h2 class="slide-title animate-title">Propósito del Informe</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div class="animate-left">
+                        <p>El presente informe brinda a la Asamblea General una visión transparente y estructurada sobre la gestión realizada, enfocándose en los siguientes objetivos principales:</p>
+                        <ul class="standard-list" style="margin-top: 20px;">
+                            <li><strong>Rendición de cuentas:</strong> Exponer las decisiones adoptadas bajo principios de cumplimiento normativo y transparencia.</li>
+                            <li><strong>Transparencia financiera:</strong> Presentar la ejecución presupuestal, estado de cartera y proyecciones.</li>
+                            <li><strong>Mantenimiento y Control:</strong> Informar sobre intervenciones en las zonas comunes, senderos peatonales y áreas de esparcimiento.</li>
+                            <li><strong>Visión estratégica:</strong> Identificar riesgos estructurales y proponer soluciones para proteger el patrimonio de la urbanización.</li>
+                        </ul>
+                    </div>
+                    <div class="animate-right">
+                        <div class="image-wrapper">
+                            <img src="IMG_5785.jpg" alt="Portería de la Urbanización Ciudad Central P.H." style="object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Conformación del Consejo -->
+        <div class="slide-container" data-slide="3">
+            <h2 class="slide-title animate-title">Conformación del Consejo</h2>
+            <div class="content-area">
+                <div class="two-column tiled">
+                    <div class="animate-item-1">
+                        <h3><i class="fa-solid fa-users" style="color: #0284c7; margin-right: 10px;"></i> Miembros Activos</h3>
+                        <p style="margin-bottom: 15px;">Agradecemos el compromiso del equipo directivo que lideró la gestión del periodo:</p>
+                        <ul class="standard-list">
+                            <li><strong>Presidente:</strong> Jovanny Arango (Suplente: Freddy Paniagua)</li>
+                            <li><strong>Tesorera:</strong> Jasbleydhy Valencia (Suplente: María Esneda Arango)</li>
+                            <li><strong>Secretario:</strong> Tulio Ruiz</li>
+                            <li><strong>Vocales:</strong> Oscar Zapata, Carmelo Buelvas</li>
+                        </ul>
+                    </div>
+                    <div class="animate-item-2">
+                        <h3><i class="fa-solid fa-user-minus" style="color: #64748b; margin-right: 10px;"></i> Renuncias al Cargo</h3>
+                        <p style="margin-bottom: 15px;">Durante el presente periodo, los siguientes miembros presentaron su renuncia oficial al Consejo de Administración:</p>
+                        <ul class="standard-list" style="color: #64748b;">
+                            <li>Jorge Ochoa</li>
+                            <li>Diego Castro</li>
+                            <li>Milena Arroyave</li>
+                        </ul>
+                        <p style="margin-top: auto; font-style: italic; font-size: 14px;">El Consejo continuó operando garantizando el quórum y la representatividad legal requerida para 596 unidades.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Gestión Administrativa -->
+        <div class="slide-container" data-slide="4">
+            <h2 class="slide-title animate-title">Gestión Administrativa y Financiera</h2>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile animate-item-1">
+                        <div class="icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <h3>Supervisión Operativa</h3>
+                        <p>Se realizó un seguimiento continuo a la gestión administrativa, garantizando la atención oportuna a residentes y el cumplimiento estricto de las obligaciones contractuales y recaudo de cartera.</p>
+                    </div>
+                    <div class="tile animate-item-2">
+                        <div class="icon"><i class="fa-solid fa-file-contract"></i></div>
+                        <h3>Control de Proveedores</h3>
+                        <p>Optimización de recursos exigiendo un mínimo de tres (3) cotizaciones para validación, logrando contener gastos no esenciales y asegurar la mejor relación costo-beneficio para la unidad.</p>
+                    </div>
+                    <div class="tile animate-item-3">
+                        <div class="icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <h3>Sostenibilidad Financiera</h3>
+                        <p>Ante el impacto del incremento del salario mínimo y los altos costos operativos, se renegociaron condiciones contractuales para mitigar el efecto en el presupuesto sin afectar los servicios esenciales.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Infraestructura -->
+        <div class="slide-container" data-slide="5">
+            <h2 class="slide-title animate-title">Infraestructura y Zonas Comunes</h2>
+            <div class="content-area">
+                <p class="animate-subtitle" style="margin-bottom: 30px; max-width: 900px;">Se ejecutaron intervenciones preventivas y correctivas enfocadas en mantener la estética y funcionalidad de nuestras extensas áreas comunes y torres.</p>
+                <div class="tiled-content">
+                    <div class="image-tile animate-item-1">
+                        <div class="image-wrapper">
+                            <img src="IMG_5743.jpg" alt="Cancha de fútbol sintética">
+                        </div>
+                        <p>Cancha y Áreas Deportivas</p>
+                    </div>
+                    <div class="image-tile animate-item-2">
+                        <div class="image-wrapper">
+                            <img src="IMG_5757.jpg" alt="Parque infantil">
+                        </div>
+                        <p>Reparación en Parque Infantil</p>
+                    </div>
+                    <div class="image-tile animate-item-3">
+                        <div class="image-wrapper">
+                            <img src="IMG_5745.jpg" alt="Fachada de ladrillo">
+                        </div>
+                        <p>Mantenimiento de Fachadas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Alerta Crítica -->
+        <div class="slide-container bleed-image-layout" data-slide="6">
+            <div class="content-container bleed-alert">
+                <h3 class="animate-title" style="margin-bottom: 10px; font-size: clamp(16px, 1.5vw, 20px); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-triangle-exclamation"></i> Urgencia Manifiesta</h3>
+                <h1 class="animate-subtitle" style="font-size: clamp(30px, 3.5vw, 45px); line-height: 1.2; margin-bottom: 25px;">Alerta Crítica: Impermeabilización de Zonas Húmedas</h1>
+                <div class="bleed-text-side">
+                    <p class="animate-content">La filtración continua de agua desde la piscina semiolímpica —ubicada en la parte superior del edificio de parqueaderos— hacia las celdas inferiores configura una grave patología estructural.</p>
+                    <p class="animate-content">De no ser atendida de forma integral, derivará en deterioro acelerado del concreto y corrosión del acero de refuerzo de la estructura de parqueaderos.</p>
+                    <p class="animate-content" style="font-weight: 600; color: #0f172a;">Se requiere aprobación prioritaria de recursos por parte de la Asamblea para la impermeabilización y evitar un detrimento patrimonial incalculable.</p>
+                </div>
+            </div>
+            <div class="image-container animate-right">
+                <img class="bleed-image-side" src="IMG_5753.jpg" alt="Piscina con parque acuático">
+            </div>
+        </div>
+
+        <!-- Slide 7: Seguridad -->
+        <div class="slide-container" data-slide="7">
+            <h2 class="slide-title animate-title">Fortalecimiento de Seguridad</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div class="animate-left">
+                        <p>El Consejo sugiere la implementación de un sistema de video vigilancia complementario para mitigar riesgos y aumentar el control en zonas de circulación de las torres y zonas comunes.</p>
+                        <p style="font-weight: 600; color: #0f172a; margin: 20px 0;">Propuesta Técnica:</p>
+                        <ul class="standard-list">
+                            <li>Instalación de mínimo <strong>dos (2) cámaras por nivel</strong> en cada torre.</li>
+                            <li>Cobertura estratégica de accesos a apartamentos, salones sociales, terraza y pista de skate.</li>
+                            <li>Fortalecimiento de los mecanismos de disuasión delictiva ante el alto flujo de personas.</li>
+                            <li>Trazabilidad y evidencia fílmica bajo el cumplimiento de la ley de protección de datos (Habeas Data).</li>
+                        </ul>
+                    </div>
+                    <div class="animate-right">
+                        <div class="image-wrapper">
+                            <img src="IMG_5781.jpg" alt="Edificio de parqueaderos" style="object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Logros Relevantes -->
+        <div class="slide-container" data-slide="8">
+            <h2 class="slide-title animate-title">Logros Relevantes</h2>
+            <div class="content-area styled-bullet-layout">
+                <div class="bullet-list">
+                    <ul>
+                        <li class="animate-item-1">
+                            <i class="fa-solid fa-paint-roller"></i>
+                            <strong>Ejecución de pintura de fachadas</strong>
+                            Se completaron los trabajos de pintura de las torres, mejorando notablemente la estética y protegiendo la estructura de las inclemencias del clima.
+                        </li>
+                        <li class="animate-item-2">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <strong>Renovación de la Administración</strong>
+                            Se realizó el cambio de administrador para lograr una mayor alineación con las estrategias del Consejo en mantenimientos preventivos, cartera y control interno.
+                        </li>
+                        <li class="animate-item-3">
+                            <i class="fa-solid fa-elevator"></i>
+                            <strong>Mejora en el servicio de ascensores</strong>
+                            Tras la rigurosa evaluación y cambio de proveedor, se evidenció una reducción en tiempos de respuesta y mayor confiabilidad en la operación vertical de los 596 apartamentos.
+                        </li>
+                        <li class="animate-item-4">
+                            <i class="fa-solid fa-person-walking-arrow-right"></i>
+                            <strong>Instalación de torniquetes de ingreso</strong>
+                            Se modernizó el acceso peatonal en la portería, fortaleciendo los controles de visitantes cerca de la estación Madera.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Retos y Recomendaciones -->
+        <div class="slide-container" data-slide="9">
+            <h2 class="slide-title animate-title">Retos y Recomendaciones</h2>
+            <div class="content-area">
+                <div class="two-column tiled">
+                    <div class="animate-item-1">
+                        <h3 style="color: #e11d48;">Dificultades Superadas</h3>
+                        <p>Durante el periodo enfrentamos presiones presupuestales que requirieron gestión inmediata:</p>
+                        <ul class="standard-list" style="margin-top: 15px;">
+                            <li>Incremento histórico en costos operativos derivados del ajuste al salario mínimo legal.</li>
+                            <li>Necesidad de renegociar contratos de servicios esenciales de vigilancia y aseo.</li>
+                            <li>Fallas y filtraciones en la zona de la piscina que afectaron directamente los niveles de parqueaderos.</li>
+                        </ul>
+                    </div>
+                    <div class="animate-item-2">
+                        <h3 style="color: #0284c7;">Recomendaciones a la Asamblea</h3>
+                        <p>Para asegurar la viabilidad futura de Ciudad Central, recomendamos:</p>
+                        <ul class="standard-list" style="margin-top: 15px;">
+                            <li>Aprobar ajustes a la cuota de administración que garanticen la sostenibilidad operativa.</li>
+                            <li>Mantener estrictos programas de mantenimiento en motobombas y zonas de alto tráfico.</li>
+                            <li><strong>Aprobar sin dilación la inversión prioritaria</strong> para la reparación estructural e impermeabilización de las piscinas.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Conclusión Final -->
+        <div class="slide-container full-bg-image" data-slide="10" style="background-image: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.8)), url('IMG_5765.jpg');">
+            <div class="content-overlay animate-scale">
+                <h2 class="animate-title" style="font-size: clamp(35px, 4vw, 50px); color: #0f172a; margin-bottom: 20px;">Conclusiones</h2>
+                <p class="animate-content" style="font-size: clamp(16px, 1.5vw, 20px); color: #475569; margin-bottom: 20px;">El periodo estuvo marcado por retos económicos importantes, gestionados mediante acciones estratégicas enfocadas en la eficiencia, la austeridad y el control riguroso del gasto en la urbanización.</p>
+                <hr class="animate-content" style="background-color: #0284c7; border: none; height: 3px; width: 50px; margin: 20px auto;">
+                <p class="animate-content" style="font-size: clamp(14px, 1.3vw, 18px); color: #0f172a; font-weight: 600;">El Consejo reafirma su compromiso con Ciudad Central y agradece profundamente a las 596 familias por su confianza y apoyo.</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Q&A -->
+        <div class="slide-container" data-slide="11">
+            <div class="qa-layout">
+                <h2 class="animate-title">Preguntas y Aprobación</h2>
+                <p class="animate-subtitle" style="font-size: clamp(18px, 2vw, 24px);">Gracias por su atención a este informe de gestión.</p>
+                <div class="contact-info animate-content">
+                    Consejo de Administración <br> 
+                    <span style="font-weight: 400; font-size: clamp(14px, 1.5vw, 18px); color: #475569;">
+                        Urbanización Ciudad Central P.H. <br> Madera, Bello
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="slide-nav" id="slideNav"></div>
+    
+    <div class="slide-counter" id="slideCounter">1 / 11</div>
+    
+    <div class="keyboard-hint">
+        <kbd>←</kbd> <kbd>→</kbd> para navegar
+    </div>
+</div>
+
+<script>
+    const slides = document.querySelectorAll('.slide-container');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+
+    const progressBar = document.getElementById('progressBar');
+    const slideCounter = document.getElementById('slideCounter');
+    const slideNav = document.getElementById('slideNav');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    // Create navigation dots
+    slides.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (index === 0 ? ' active' : '');
+        dot.addEventListener('click', () => goToSlide(index));
+        slideNav.appendChild(dot);
+    });
+
+    function updateSlide() {
+        slides.forEach((slide, index) => {
+            slide.classList.remove('active', 'prev', 'next');
+            if (index === currentSlide) {
+                slide.classList.add('active');
+            } else if (index < currentSlide) {
+                slide.classList.add('prev');
+            } else {
+                slide.classList.add('next');
+            }
+        });
+
+        // Update progress bar
+        const progress = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = progress + '%';
+
+        // Update counter
+        slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+
+        // Update navigation dots
+        document.querySelectorAll('.slide-nav .dot').forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
+        });
+
+        // Update arrow buttons
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+    }
+
+    function changeSlide(direction) {
+        const newSlide = currentSlide + direction;
+        if (newSlide >= 0 && newSlide < totalSlides) {
+            currentSlide = newSlide;
+            updateSlide();
+        }
+    }
+
+    function goToSlide(index) {
+        currentSlide = index;
+        updateSlide();
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+            e.preventDefault();
+            changeSlide(1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            changeSlide(-1);
+        } else if (e.key === 'Home') {
+            e.preventDefault();
+            goToSlide(0);
+        } else if (e.key === 'End') {
+            e.preventDefault();
+            goToSlide(totalSlides - 1);
+        }
+    });
+
+    // Touch/swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                changeSlide(1); // Swipe left - next slide
+            } else {
+                changeSlide(-1); // Swipe right - previous slide
+            }
+        }
+    }
+
+    // Mouse wheel navigation
+    let wheelTimeout;
+    document.addEventListener('wheel', (e) => {
+        clearTimeout(wheelTimeout);
+        wheelTimeout = setTimeout(() => {
+            if (e.deltaY > 0) {
+                changeSlide(1);
+            } else {
+                changeSlide(-1);
+            }
+        }, 50);
+    }, { passive: true });
+
+    // Initialize
+    updateSlide();
+</script>
+
+</body>
+</html>
